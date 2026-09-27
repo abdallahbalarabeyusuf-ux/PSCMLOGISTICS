@@ -1,0 +1,7 @@
+.git
+.github
+.claude
+tests
+node_modules
+.phpunit.result.cache
+schema.sql
