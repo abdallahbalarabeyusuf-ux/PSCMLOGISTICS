@@ -69,4 +69,34 @@ class PaymentController extends Controller
 
         return redirect()->route('shipments.show', $shipment)->withErrors(['payment' => 'Payment was not successful.']);
     }
+
+    public function webhook(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $signature = $request->header('x-paystack-signature');
+        $payload = $request->getContent();
+
+        if (! $signature || ! hash_equals($signature, hash_hmac('sha512', $payload, config('paystack.secret_key') ?? ''))) {
+            return response()->json(['message' => 'Invalid signature'], 400);
+        }
+
+        $event = json_decode($payload, true);
+        if (($event['event'] ?? '') === 'charge.success') {
+            $data = $event['data'] ?? [];
+            $reference = $data['reference'] ?? null;
+
+            if ($reference) {
+                $payment = Payment::where('reference', $reference)->first();
+                if ($payment) {
+                    $payment->update([
+                        'status' => 'success',
+                        'channel' => $data['channel'] ?? null,
+                        'paid_at' => now(),
+                    ]);
+                    $payment->shipment?->update(['payment_status' => 'paid']);
+                }
+            }
+        }
+
+        return response()->json(['status' => 'success'], 200);
+    }
 }

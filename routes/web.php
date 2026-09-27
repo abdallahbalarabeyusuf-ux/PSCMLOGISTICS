@@ -62,6 +62,7 @@ Route::get('/track-shipment/{shipment:waybill_number}/location', [ShipmentContro
 */
 Route::get('/payments/{shipment:waybill_number}/pay', [PaymentController::class, 'pay'])->name('payments.pay');
 Route::get('/payments/callback', [PaymentController::class, 'callback'])->name('payments.callback');
+Route::post('/payments/webhook', [PaymentController::class, 'webhook'])->name('payments.webhook');
 
 /*
 |--------------------------------------------------------------------------
