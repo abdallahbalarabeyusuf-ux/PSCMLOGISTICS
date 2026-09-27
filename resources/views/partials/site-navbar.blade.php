@@ -1,9 +1,4 @@
 <header x-data="{ mobileOpen: false }" class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
-    <div class="mx-auto flex max-w-7xl justify-end px-4 py-1 sm:px-6 lg:px-8">
-        <span class="flex items-center gap-1 text-xs font-medium text-gray-500">
-            🕒 <span id="kano-live-time">--:--:--</span> Kano Time
-        </span>
-    </div>
 
     <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <a href="{{ route('home') }}" class="flex items-center gap-2 shrink-0">
@@ -56,18 +51,3 @@
     </div>
 </header>
 
-<script>
-    function updateKanoLiveTime() {
-        const el = document.getElementById('kano-live-time');
-        if (!el) return;
-        el.textContent = new Date().toLocaleTimeString('en-US', {
-            timeZone: 'Africa/Lagos',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true,
-        });
-    }
-    updateKanoLiveTime();
-    setInterval(updateKanoLiveTime, 1000);
-</script>
