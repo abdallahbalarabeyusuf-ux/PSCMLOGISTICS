@@ -7,9 +7,7 @@
             {{-- Brand & About --}}
             <div>
                 <div class="flex items-center gap-3">
-                    <div class="h-12 w-12 rounded-full bg-white p-1 flex items-center justify-center shrink-0 shadow-sm">
-                        <img src="{{ asset('images/logo.png') }}" alt="PSCM Logo" class="h-10 w-10 object-contain">
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="PSCM Logo" class="h-12 w-12 rounded-full bg-white object-contain shadow-sm shrink-0">
                     <div>
                         <span class="block text-2xl font-black text-white leading-none tracking-tight">PSCM</span>
                         <span class="block text-[9px] font-bold text-amber-400 tracking-wider uppercase mt-1">PRIME SUPPLY CHAIN MANAGEMENT</span>
