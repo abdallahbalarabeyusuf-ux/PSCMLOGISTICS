@@ -17,19 +17,6 @@
     <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div class="lg:col-span-2 space-y-6">
-                @php
-                    $isLiveTrackable = $shipment->rider && in_array($shipment->status, ['picked_up', 'in_transit', 'out_for_delivery'], true);
-                @endphp
-
-                @if ($isLiveTrackable)
-                    <div class="card">
-                        <div class="flex items-center justify-between">
-                            <h2 class="font-bold text-gray-900">Live Rider Location</h2>
-                            <span class="text-xs text-gray-400" id="rider-location-updated">Locating rider...</span>
-                        </div>
-                        <div id="rider-map" class="mt-4 h-64 w-full rounded-lg bg-gray-100"></div>
-                    </div>
-                @endif
 
                 <div class="card">
                     <h2 class="font-bold text-gray-900">Tracking Timeline</h2>
@@ -86,50 +73,4 @@
 
 @endsection
 
-@if ($isLiveTrackable)
-    @push('styles')
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    @endpush
 
-    @push('scripts')
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script>
-        const map = L.map('rider-map');
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors',
-            maxZoom: 19,
-        }).addTo(map);
-
-        let riderMarker = null;
-
-        async function pollRiderLocation() {
-            try {
-                const response = await fetch(@json(route('shipments.location', $shipment)));
-                const data = await response.json();
-
-                if (!data.available) {
-                    document.getElementById('rider-location-updated').textContent = 'Rider location not available yet.';
-                    return;
-                }
-
-                const latLng = [data.lat, data.lng];
-
-                if (!riderMarker) {
-                    riderMarker = L.marker(latLng).addTo(map);
-                    map.setView(latLng, 15);
-                } else {
-                    riderMarker.setLatLng(latLng);
-                }
-
-                riderMarker.bindPopup(`${data.rider_name} — last updated ${data.updated_at}`);
-                document.getElementById('rider-location-updated').textContent = 'Last updated ' + data.updated_at;
-            } catch (e) {
-                document.getElementById('rider-location-updated').textContent = 'Unable to reach live tracking right now.';
-            }
-        }
-
-        pollRiderLocation();
-        setInterval(pollRiderLocation, 10000);
-    </script>
-    @endpush
-@endif

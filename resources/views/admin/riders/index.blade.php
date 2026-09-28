@@ -9,14 +9,6 @@
         <a href="{{ route('admin.riders.create') }}" class="btn-secondary">+ Add Rider</a>
     </div>
 
-    <div class="card mb-6">
-        <div class="flex items-center justify-between">
-            <h3 class="font-bold text-gray-900">Live Rider Map</h3>
-            <span class="text-xs text-gray-400" id="riders-map-updated"></span>
-        </div>
-        <div id="riders-map" class="mt-4 h-72 w-full rounded-lg bg-gray-100"></div>
-    </div>
-
     <div class="card">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-100 text-sm">
@@ -61,55 +53,3 @@
 
 @endsection
 
-@push('styles')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-@endpush
-
-@push('scripts')
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script>
-    const ridersMap = L.map('riders-map').setView([12.0022, 8.5920], 12); // Kano, Nigeria
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19,
-    }).addTo(ridersMap);
-
-    let riderMarkers = {};
-
-    async function pollRiderLocations() {
-        try {
-            const response = await fetch(@json(route('admin.riders.locations')));
-            const riders = await response.json();
-
-            const seenIds = new Set();
-
-            riders.forEach((rider) => {
-                seenIds.add(rider.id);
-                const latLng = [rider.lat, rider.lng];
-
-                if (!riderMarkers[rider.id]) {
-                    riderMarkers[rider.id] = L.marker(latLng).addTo(ridersMap);
-                } else {
-                    riderMarkers[rider.id].setLatLng(latLng);
-                }
-
-                riderMarkers[rider.id].bindPopup(`<strong>${rider.name}</strong><br>${rider.vehicle_type}<br>Updated ${rider.updated_at}`);
-            });
-
-            Object.keys(riderMarkers).forEach((id) => {
-                if (!seenIds.has(Number(id))) {
-                    ridersMap.removeLayer(riderMarkers[id]);
-                    delete riderMarkers[id];
-                }
-            });
-
-            document.getElementById('riders-map-updated').textContent = riders.length + ' rider(s) online';
-        } catch (e) {
-            document.getElementById('riders-map-updated').textContent = 'Unable to load live locations.';
-        }
-    }
-
-    pollRiderLocations();
-    setInterval(pollRiderLocations, 10000);
-</script>
-@endpush
