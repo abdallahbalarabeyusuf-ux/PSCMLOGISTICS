@@ -4,7 +4,7 @@
 
 @section('content')
     <h1 class="text-xl font-bold text-gray-900 mb-1">Welcome Back</h1>
-    <p class="text-sm text-gray-500 mb-6">Log in to your PSCM account to track shipments and manage pickups.</p>
+    <p class="text-sm text-gray-500 mb-6">Log in to access your PSCM dashboard and manage shipments.</p>
 
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

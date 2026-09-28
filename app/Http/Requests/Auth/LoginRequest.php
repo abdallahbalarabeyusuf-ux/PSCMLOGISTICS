@@ -34,23 +34,41 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Attempt to authenticate the request's credentials.
+     * Attempt to authenticate against admin, rider, or customer guards.
      *
+     * @return string The authenticated guard name ('admin', 'rider', or 'web')
      * @throws ValidationException
      */
-    public function authenticate(): void
+    public function authenticate(): string
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        $credentials = $this->only('email', 'password');
+        $remember = $this->boolean('remember');
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
+        // 1. Try Admin guard
+        if (Auth::guard('admin')->attempt($credentials, $remember)) {
+            RateLimiter::clear($this->throttleKey());
+            return 'admin';
         }
 
-        RateLimiter::clear($this->throttleKey());
+        // 2. Try Rider guard
+        if (Auth::guard('rider')->attempt($credentials, $remember)) {
+            RateLimiter::clear($this->throttleKey());
+            return 'rider';
+        }
+
+        // 3. Try Customer (web) guard
+        if (Auth::guard('web')->attempt($credentials, $remember)) {
+            RateLimiter::clear($this->throttleKey());
+            return 'web';
+        }
+
+        RateLimiter::hit($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => trans('auth.failed'),
+        ]);
     }
 
     /**

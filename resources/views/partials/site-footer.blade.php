@@ -58,8 +58,7 @@
             <p>&copy; {{ date('Y') }} PSCM Logistics. All rights reserved.</p>
             <div class="flex gap-4">
                 <a href="{{ route('contact') }}" class="hover:text-white transition-colors">Contact Us</a>
-                <a href="{{ route('admin.login') }}" class="hover:text-white transition-colors">Admin Portal</a>
-                <a href="{{ route('rider.login') }}" class="hover:text-white transition-colors">Rider Portal</a>
+                <a href="{{ route('login') }}" class="hover:text-white transition-colors">Login Portal</a>
             </div>
         </div>
     </div>

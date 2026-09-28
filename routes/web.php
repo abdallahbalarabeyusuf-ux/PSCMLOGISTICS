@@ -88,11 +88,7 @@ Route::post('/stop-impersonating', [ImpersonationController::class, 'stop'])->na
 |--------------------------------------------------------------------------
 */
 Route::prefix('rider')->name('rider.')->group(function () {
-    Route::middleware('guest:rider')->group(function () {
-        Route::get('/login', [RiderAuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [RiderAuthController::class, 'login'])->name('login.submit');
-    });
-
+    Route::get('/login', fn () => redirect()->route('login'))->name('login');
     Route::post('/logout', [RiderAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('rider')->group(function () {
@@ -107,11 +103,7 @@ Route::prefix('rider')->name('rider.')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::middleware('guest:admin')->group(function () {
-        Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
-    });
-
+    Route::get('/login', fn () => redirect()->route('login'))->name('login');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('admin')->group(function () {

@@ -19,11 +19,15 @@
         </div>
 
         <div class="hidden lg:flex items-center gap-3 shrink-0">
-            @auth
+            @if(auth('admin')->check())
+                <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold text-primary hover:text-primary-700">Admin Dashboard</a>
+            @elseif(auth('rider')->check())
+                <a href="{{ route('rider.dashboard') }}" class="text-sm font-semibold text-primary hover:text-primary-700">Rider Dashboard</a>
+            @elseif(auth()->check())
                 <a href="{{ route('customer.dashboard') }}" class="text-sm font-semibold text-primary hover:text-primary-700">My Dashboard</a>
             @else
                 <a href="{{ route('login') }}" class="text-sm font-semibold text-gray-700 hover:text-primary">Login</a>
-            @endauth
+            @endif
             <a href="{{ route('shipments.create') }}" class="btn-secondary">Request Pickup</a>
         </div>
 
@@ -42,11 +46,15 @@
         <a href="{{ route('contact') }}" class="block hover:text-primary">Contact</a>
         <a href="{{ route('rider-application.create') }}" class="block hover:text-primary">Become a Rider</a>
         <hr class="border-gray-100">
-        @auth
+        @if(auth('admin')->check())
+            <a href="{{ route('admin.dashboard') }}" class="block text-primary">Admin Dashboard</a>
+        @elseif(auth('rider')->check())
+            <a href="{{ route('rider.dashboard') }}" class="block text-primary">Rider Dashboard</a>
+        @elseif(auth()->check())
             <a href="{{ route('customer.dashboard') }}" class="block text-primary">My Dashboard</a>
         @else
             <a href="{{ route('login') }}" class="block text-primary">Login</a>
-        @endauth
+        @endif
         <a href="{{ route('shipments.create') }}" class="btn-secondary w-full">Request Pickup</a>
     </div>
 </header>

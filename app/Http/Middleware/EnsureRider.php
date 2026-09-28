@@ -16,7 +16,7 @@ class EnsureRider
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth('rider')->check()) {
-            return redirect()->route('rider.login');
+            return redirect()->route('login');
         }
 
         return $next($request);

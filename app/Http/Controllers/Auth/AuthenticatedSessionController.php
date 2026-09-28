@@ -24,11 +24,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        $guard = $request->authenticate();
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('customer.dashboard', absolute: false));
+        return match ($guard) {
+            'admin' => redirect()->intended(route('admin.dashboard', absolute: false)),
+            'rider' => redirect()->intended(route('rider.dashboard', absolute: false)),
+            default => redirect()->intended(route('customer.dashboard', absolute: false)),
+        };
     }
 
     /**
@@ -37,6 +41,8 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
+        Auth::guard('rider')->logout();
 
         $request->session()->invalidate();
 

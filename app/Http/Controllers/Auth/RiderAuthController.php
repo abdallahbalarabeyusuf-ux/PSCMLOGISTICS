@@ -40,6 +40,6 @@ class RiderAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('rider.login');
+        return redirect()->route('login');
     }
 }

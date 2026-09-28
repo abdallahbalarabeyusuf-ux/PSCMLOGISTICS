@@ -16,7 +16,7 @@ class EnsureAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth('admin')->check()) {
-            return redirect()->route('admin.login');
+            return redirect()->route('login');
         }
 
         return $next($request);
