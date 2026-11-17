@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon.png') }}">
 
     <title>@yield('title', 'PSCM - Prime Supply Chain Management')</title>
     <meta name="description" content="@yield('meta_description', 'Fast, reliable and secure logistics & dispatch services across Kano State and beyond.')">

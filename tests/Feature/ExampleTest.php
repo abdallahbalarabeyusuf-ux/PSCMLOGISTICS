@@ -14,6 +14,8 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertOk()
+            ->assertSee('rel="icon" type="image/png" sizes="192x192"', false)
+            ->assertSee('favicon.png');
     }
 }
