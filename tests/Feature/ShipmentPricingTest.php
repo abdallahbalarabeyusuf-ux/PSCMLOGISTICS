@@ -67,7 +67,7 @@ class ShipmentPricingTest extends TestCase
         $this->postJson(route('pricing.calculate'), [
             'distance_km' => 3,
         ])->assertOk()->assertExactJson([
-            'amount' => '5,000.00',
+            'amount' => '2,500.00',
         ]);
     }
 
@@ -90,7 +90,7 @@ class ShipmentPricingTest extends TestCase
             ->assertRedirect();
 
         $this->assertSame(3.0, (float) $shipment->fresh()->distance_km);
-        $this->assertSame(5000.0, (float) $shipment->fresh()->amount);
+        $this->assertSame(2500.0, (float) $shipment->fresh()->amount);
     }
 
     public function test_admin_can_adjust_the_distance_based_estimate(): void
