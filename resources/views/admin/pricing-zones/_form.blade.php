@@ -10,15 +10,9 @@
         <input name="name" class="input" value="{{ old('name', $pricingZone->name ?? '') }}" required>
         <x-input-error :messages="$errors->get('name')" class="mt-2" />
     </div>
-    <div>
-        <label class="label">Base Fee (&#8358;)</label>
-        <input type="number" step="0.01" min="0" name="base_fee" class="input" value="{{ old('base_fee', $pricingZone->base_fee ?? '') }}" required>
-        <x-input-error :messages="$errors->get('base_fee')" class="mt-2" />
-    </div>
-    <div>
-        <label class="label">Rate per kg (&#8358;)</label>
-        <input type="number" step="0.01" min="0" name="rate_per_kg" class="input" value="{{ old('rate_per_kg', $pricingZone->rate_per_kg ?? '') }}" required>
-        <x-input-error :messages="$errors->get('rate_per_kg')" class="mt-2" />
-    </div>
 </div>
+<p class="mt-4 text-sm text-gray-500">
+    Shipment estimates use a base fee of &#8358;{{ number_format(config('pricing.base_fee'), 2) }}
+    plus &#8358;{{ number_format(config('pricing.rate_per_km'), 2) }} per kilometer.
+</p>
 <button type="submit" class="btn-primary mt-6">Save Zone</button>

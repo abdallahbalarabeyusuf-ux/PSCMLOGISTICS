@@ -49,6 +49,9 @@
 
                 <div class="card space-y-2 text-sm">
                     <div class="flex justify-between"><span class="text-gray-500">Package</span><span class="font-semibold">{{ $shipment->package_type }}</span></div>
+                    @if ($shipment->distance_km)
+                        <div class="flex justify-between"><span class="text-gray-500">Trip Distance</span><span class="font-semibold">{{ $shipment->distance_km }} km</span></div>
+                    @endif
                     <div class="flex justify-between">
                         <span class="text-gray-500">Estimated Price</span>
                         <span class="font-semibold">

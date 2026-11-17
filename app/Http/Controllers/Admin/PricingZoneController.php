@@ -12,7 +12,7 @@ class PricingZoneController extends Controller
 {
     public function index(): View
     {
-        $zones = PricingZone::orderBy('base_fee')->get();
+        $zones = PricingZone::orderBy('name')->get();
 
         return view('admin.pricing-zones.index', compact('zones'));
     }
@@ -27,11 +27,13 @@ class PricingZoneController extends Controller
         $data = $request->validate([
             'code' => ['required', 'string', 'max:50', 'unique:pricing_zones,code', 'alpha_dash'],
             'name' => ['required', 'string', 'max:255'],
-            'base_fee' => ['required', 'numeric', 'min:0'],
-            'rate_per_kg' => ['required', 'numeric', 'min:0'],
         ]);
 
-        PricingZone::create($data);
+        PricingZone::create([
+            ...$data,
+            'base_fee' => config('pricing.base_fee'),
+            'rate_per_kg' => config('pricing.rate_per_km'),
+        ]);
 
         return redirect()->route('admin.pricing-zones.index')->with('status', 'Pricing zone added.');
     }
@@ -46,8 +48,6 @@ class PricingZoneController extends Controller
         $data = $request->validate([
             'code' => ['required', 'string', 'max:50', 'alpha_dash', 'unique:pricing_zones,code,' . $pricingZone->id],
             'name' => ['required', 'string', 'max:255'],
-            'base_fee' => ['required', 'numeric', 'min:0'],
-            'rate_per_kg' => ['required', 'numeric', 'min:0'],
         ]);
 
         $pricingZone->update($data);

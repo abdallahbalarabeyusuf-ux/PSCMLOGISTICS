@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Rider;
 use App\Models\Shipment;
+use App\Services\PricingService;
 use App\Services\SmsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,13 +37,37 @@ class ShipmentController extends Controller
         return view('admin.shipments.show', compact('shipment', 'riders'));
     }
 
-    public function update(Request $request, Shipment $shipment): RedirectResponse
+    public function update(Request $request, Shipment $shipment, PricingService $pricingService): RedirectResponse
     {
         $data = $request->validate([
             'rider_id' => ['nullable', 'exists:riders,id'],
             'payment_status' => ['required', 'in:unpaid,paid'],
-            'amount' => ['required', 'numeric', 'min:0.01'],
+            'distance_km' => ['nullable', 'numeric', 'min:0.1', 'max:10000'],
+            'amount' => ['nullable', 'numeric', 'min:0.01'],
         ]);
+
+        $distanceKm = $data['distance_km'] ?? null;
+        $amount = $data['amount'] ?? null;
+
+        if ($distanceKm !== null && $amount === null) {
+            $amount = $pricingService->calculate((float) $distanceKm);
+        } elseif ($distanceKm === null && $amount !== null && (float) $amount !== (float) $shipment->amount && $shipment->distance_km === null) {
+            return back()->withErrors(['distance_km' => 'Enter the trip distance before setting an estimated price.'])->withInput();
+        }
+
+        if ($distanceKm === null) {
+            unset($data['distance_km']);
+        }
+
+        if ($amount === null) {
+            unset($data['amount']);
+        } else {
+            $data['amount'] = $amount;
+        }
+
+        if ($data['payment_status'] === 'paid' && $amount === null && (float) $shipment->amount <= 0) {
+            return back()->withErrors(['amount' => 'Set an estimated price before marking the shipment as paid.'])->withInput();
+        }
 
         $shipment->update($data);
 

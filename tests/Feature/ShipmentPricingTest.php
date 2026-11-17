@@ -62,6 +62,15 @@ class ShipmentPricingTest extends TestCase
             ->assertDontSee('Pay Now');
     }
 
+    public function test_public_pricing_calculator_uses_trip_distance(): void
+    {
+        $this->postJson(route('pricing.calculate'), [
+            'distance_km' => 3,
+        ])->assertOk()->assertExactJson([
+            'amount' => '5,000.00',
+        ]);
+    }
+
     public function test_admin_can_set_the_estimated_price(): void
     {
         $admin = Admin::create([
@@ -69,35 +78,55 @@ class ShipmentPricingTest extends TestCase
             'email' => 'admin@example.test',
             'password' => 'password',
         ]);
-        $shipment = Shipment::create([
-            'waybill_number' => 'PSCMTEST001',
-            'sender_name' => 'Sender',
-            'sender_phone' => '08000000000',
-            'pickup_address' => 'Pickup address',
-            'receiver_name' => 'Receiver',
-            'receiver_phone' => '08000000001',
-            'delivery_address' => 'Delivery address',
-            'package_type' => 'Parcel',
-            'destination_zone' => 'within_kano',
-            'payment_method' => 'online',
-            'amount' => 0,
-        ]);
+        $shipment = $this->createShipment('PSCMTEST001');
 
         $this->actingAs($admin, 'admin')
             ->put(route('admin.shipments.update', $shipment), [
                 'rider_id' => null,
                 'payment_status' => 'unpaid',
-                'amount' => 1250,
+                'distance_km' => 3,
+                'amount' => null,
             ])
             ->assertRedirect();
 
-        $this->assertSame(1250.0, (float) $shipment->fresh()->amount);
+        $this->assertSame(3.0, (float) $shipment->fresh()->distance_km);
+        $this->assertSame(5000.0, (float) $shipment->fresh()->amount);
+    }
+
+    public function test_admin_can_adjust_the_distance_based_estimate(): void
+    {
+        $admin = Admin::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.test',
+            'password' => 'password',
+        ]);
+        $shipment = $this->createShipment('PSCMTEST003');
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.shipments.update', $shipment), [
+                'rider_id' => null,
+                'payment_status' => 'unpaid',
+                'distance_km' => 3,
+                'amount' => 5500,
+            ])
+            ->assertRedirect();
+
+        $this->assertSame(5500.0, (float) $shipment->fresh()->amount);
     }
 
     public function test_online_payment_cannot_start_before_an_admin_sets_the_price(): void
     {
-        $shipment = Shipment::create([
-            'waybill_number' => 'PSCMTEST002',
+        $shipment = $this->createShipment('PSCMTEST002');
+
+        $this->get(route('payments.pay', $shipment))
+            ->assertRedirect(route('shipments.show', $shipment))
+            ->assertSessionHasErrors('payment');
+    }
+
+    private function createShipment(string $waybill): Shipment
+    {
+        return Shipment::create([
+            'waybill_number' => $waybill,
             'sender_name' => 'Sender',
             'sender_phone' => '08000000000',
             'pickup_address' => 'Pickup address',
@@ -109,9 +138,5 @@ class ShipmentPricingTest extends TestCase
             'payment_method' => 'online',
             'amount' => 0,
         ]);
-
-        $this->get(route('payments.pay', $shipment))
-            ->assertRedirect(route('shipments.show', $shipment))
-            ->assertSessionHasErrors('payment');
     }
 }

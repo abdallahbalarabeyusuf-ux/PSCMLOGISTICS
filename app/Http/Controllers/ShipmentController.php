@@ -15,7 +15,7 @@ class ShipmentController extends Controller
 {
     public function create(): View
     {
-        $zones = PricingZone::orderBy('base_fee')->get();
+        $zones = PricingZone::orderBy('name')->get();
 
         return view('pages.request-pickup', compact('zones'));
     }

@@ -13,6 +13,9 @@
 
         <div class="mt-8 card mx-auto max-w-md text-left">
             <div class="flex justify-between text-sm py-1"><span class="text-gray-500">Package</span><span class="font-semibold">{{ $shipment->package_type }}</span></div>
+            @if ($shipment->distance_km)
+                <div class="flex justify-between text-sm py-1"><span class="text-gray-500">Trip Distance</span><span class="font-semibold">{{ $shipment->distance_km }} km</span></div>
+            @endif
             <div class="flex justify-between text-sm py-1">
                 <span class="text-gray-500">Estimated Price</span>
                 <span class="font-semibold">

@@ -12,7 +12,7 @@ class PricingController extends Controller
 {
     public function index(): View
     {
-        $zones = PricingZone::orderBy('base_fee')->get();
+        $zones = PricingZone::orderBy('name')->get();
 
         return view('pages.pricing', compact('zones'));
     }
@@ -20,11 +20,10 @@ class PricingController extends Controller
     public function calculate(Request $request, PricingService $pricingService): JsonResponse
     {
         $data = $request->validate([
-            'destination_zone' => ['required', 'string', 'exists:pricing_zones,code'],
-            'weight_kg' => ['required', 'numeric', 'min:0.1', 'max:1000'],
+            'distance_km' => ['required', 'numeric', 'min:0.1', 'max:10000'],
         ]);
 
-        $amount = $pricingService->calculate($data['destination_zone'], (float) $data['weight_kg']);
+        $amount = $pricingService->calculate((float) $data['distance_km']);
 
         return response()->json([
             'amount' => number_format($amount, 2),

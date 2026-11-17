@@ -29,6 +29,7 @@ class Shipment extends Model
         'weight_kg',
         'description',
         'destination_zone',
+        'distance_km',
         'amount',
         'payment_status',
         'payment_method',
@@ -40,6 +41,7 @@ class Shipment extends Model
     {
         return [
             'weight_kg' => 'decimal:2',
+            'distance_km' => 'decimal:2',
             'amount' => 'decimal:2',
         ];
     }

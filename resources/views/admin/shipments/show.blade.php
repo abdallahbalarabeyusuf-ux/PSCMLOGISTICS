@@ -72,7 +72,7 @@
 
             <div class="card">
                 <h3 class="font-bold text-gray-900 mb-4">Assign Rider &amp; Payment</h3>
-                <form method="POST" action="{{ route('admin.shipments.update', $shipment) }}" class="space-y-4">
+                <form method="POST" action="{{ route('admin.shipments.update', $shipment) }}" class="space-y-4" x-data="shipmentPricingForm(@json(old('distance_km', $shipment->distance_km)), @json(old('amount', (float) $shipment->amount > 0 ? $shipment->amount : null)))">
                     @csrf
                     @method('PUT')
                     <div>
@@ -92,9 +92,13 @@
                         </select>
                     </div>
                     <div>
-                        <label class="label">Estimated Price (&#8358;)</label>
-                        <input type="number" step="0.01" min="0.01" name="amount" value="{{ (float) $shipment->amount > 0 ? $shipment->amount : '' }}" class="input" required>
-                        <p class="text-xs text-gray-500">Set the price customers will see and pay.</p>
+                        <label for="distance_km" class="label">Trip Distance (km)</label>
+                        <input id="distance_km" type="number" step="0.1" min="0.1" max="10000" name="distance_km" value="{{ old('distance_km', $shipment->distance_km) }}" class="input" x-model.number="distance" @input="updateAmount()">
+                    </div>
+                    <div>
+                        <label for="amount" class="label">Estimated Price (&#8358;)</label>
+                        <input id="amount" type="number" step="0.01" min="0.01" name="amount" value="{{ old('amount', (float) $shipment->amount > 0 ? $shipment->amount : '') }}" class="input" x-model="amount">
+                        <p class="text-xs text-gray-500">Suggested at &#8358;{{ number_format(config('pricing.base_fee'), 2) }} base + &#8358;{{ number_format(config('pricing.rate_per_km'), 2) }}/km. Review or adjust before saving.</p>
                     </div>
                     <button type="submit" class="btn-primary w-full">Save Changes</button>
                 </form>
@@ -109,3 +113,27 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    function shipmentPricingForm(distance, amount) {
+        return {
+            distance: distance || '',
+            amount: amount || '',
+            baseFee: @json(config('pricing.base_fee')),
+            ratePerKm: @json(config('pricing.rate_per_km')),
+            init() {
+                if (Number(this.distance) > 0 && !this.amount) {
+                    this.updateAmount();
+                }
+            },
+            updateAmount() {
+                const distanceKm = Number(this.distance);
+                this.amount = distanceKm > 0
+                    ? (this.baseFee + this.ratePerKm * distanceKm).toFixed(2)
+                    : '';
+            },
+        };
+    }
+</script>
+@endpush
