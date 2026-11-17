@@ -31,12 +31,24 @@ class ShipmentController extends Controller
             'delivery_address' => ['required', 'string', 'max:500'],
             'package_type' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:1000'],
+            'package_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'package_video' => ['nullable', 'file', 'mimetypes:video/mp4,video/quicktime,video/webm,video/3gpp,video/3gpp2', 'max:51200'],
             'destination_zone' => ['required', 'string', 'exists:pricing_zones,code'],
             'payment_method' => ['required', 'in:pay_on_delivery,online'],
         ]);
 
+        $mediaPaths = [];
+        if ($request->hasFile('package_photo')) {
+            $mediaPaths['package_photo_path'] = $request->file('package_photo')->store('shipments', 'shipment_media');
+        }
+        if ($request->hasFile('package_video')) {
+            $mediaPaths['package_video_path'] = $request->file('package_video')->store('shipments', 'shipment_media');
+        }
+        unset($data['package_photo'], $data['package_video']);
+
         $shipment = Shipment::create([
             ...$data,
+            ...$mediaPaths,
             'user_id' => auth()->id(),
             'amount' => 0,
         ]);

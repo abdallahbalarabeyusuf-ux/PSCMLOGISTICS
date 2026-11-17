@@ -45,6 +45,25 @@
                 </div>
             </div>
 
+            @if ($shipment->package_photo_path || $shipment->package_video_path)
+                <div class="card">
+                    <h3 class="font-bold text-gray-900 mb-4">Package Media</h3>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        @if ($shipment->package_photo_path)
+                            <a href="{{ route('admin.shipments.media', [$shipment, 'photo']) }}" target="_blank" rel="noopener">
+                                <img src="{{ route('admin.shipments.media', [$shipment, 'photo']) }}" alt="Customer-provided package photo" class="w-full rounded-lg object-cover">
+                            </a>
+                        @endif
+                        @if ($shipment->package_video_path)
+                            <video controls playsinline preload="metadata" class="w-full rounded-lg">
+                                <source src="{{ route('admin.shipments.media', [$shipment, 'video']) }}">
+                                Your browser does not support video playback.
+                            </video>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div class="card">
                     <h3 class="text-sm font-bold uppercase text-gray-500">Sender</h3>

@@ -9,6 +9,7 @@ use App\Services\PricingService;
 use App\Services\SmsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ShipmentController extends Controller
@@ -35,6 +36,24 @@ class ShipmentController extends Controller
         $riders = Rider::where('status', 'active')->orderBy('name')->get();
 
         return view('admin.shipments.show', compact('shipment', 'riders'));
+    }
+
+    public function media(Shipment $shipment, string $type)
+    {
+        $path = match ($type) {
+            'photo' => $shipment->package_photo_path,
+            'video' => $shipment->package_video_path,
+            default => null,
+        };
+
+        $disk = Storage::disk('shipment_media');
+        abort_unless($path && $disk->exists($path), 404);
+
+        return response()->file($disk->path($path), [
+            'Content-Type' => $disk->mimeType($path) ?: 'application/octet-stream',
+            'Cache-Control' => 'private, no-store',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
     }
 
     public function update(Request $request, Shipment $shipment, PricingService $pricingService): RedirectResponse

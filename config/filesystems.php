@@ -38,6 +38,12 @@ return [
             'report' => false,
         ],
 
+        'shipment_media' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/shipment-media'),
+            'throw' => true,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

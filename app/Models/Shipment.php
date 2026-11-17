@@ -35,6 +35,8 @@ class Shipment extends Model
         'payment_method',
         'status',
         'qr_code_path',
+        'package_photo_path',
+        'package_video_path',
     ];
 
     protected function casts(): array

@@ -58,7 +58,7 @@
     </section>
 
     <section class="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-        <form method="POST" action="{{ route('shipments.store') }}" class="card space-y-8">
+        <form method="POST" action="{{ route('shipments.store') }}" enctype="multipart/form-data" class="card space-y-8">
             @csrf
 
             <div>
@@ -131,6 +131,18 @@
                         <label for="description" class="label">Package Description (optional)</label>
                         <textarea id="description" name="description" rows="3" class="input">{{ old('description') }}</textarea>
                         <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="package_photo" class="label">Package Photo (optional)</label>
+                        <input id="package_photo" name="package_photo" type="file" accept="image/*" capture="environment" class="input">
+                        <p class="mt-1 text-xs text-gray-500">Take a photo with your camera or choose an image (JPG, PNG, or WebP; up to 10 MB).</p>
+                        <x-input-error :messages="$errors->get('package_photo')" class="mt-2" />
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="package_video" class="label">Package Video (optional)</label>
+                        <input id="package_video" name="package_video" type="file" accept="video/*" capture="environment" class="input">
+                        <p class="mt-1 text-xs text-gray-500">Record a video with your camera or choose a clip (MP4, MOV, WebM, or 3GP; up to 50 MB).</p>
+                        <x-input-error :messages="$errors->get('package_video')" class="mt-2" />
                     </div>
                 </div>
 

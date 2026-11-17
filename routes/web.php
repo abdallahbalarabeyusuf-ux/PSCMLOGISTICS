@@ -109,6 +109,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/shipments/{shipment}/media/{type}', [AdminShipmentController::class, 'media'])->name('shipments.media');
         Route::resource('shipments', AdminShipmentController::class)->except(['create', 'store']);
         Route::post('/shipments/{shipment}/status', [AdminShipmentController::class, 'updateStatus'])->name('shipments.updateStatus');
 
