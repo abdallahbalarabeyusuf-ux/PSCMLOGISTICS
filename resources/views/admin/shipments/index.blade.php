@@ -38,7 +38,13 @@
                             <td class="py-3 pr-4 font-semibold text-gray-900">{{ $shipment->waybill_number }}</td>
                             <td class="py-3 pr-4 text-gray-600">{{ $shipment->sender_name }}</td>
                             <td class="py-3 pr-4 text-gray-600">{{ $shipment->receiver_name }}</td>
-                            <td class="py-3 pr-4 text-gray-600">&#8358;{{ number_format($shipment->amount, 2) }}</td>
+                            <td class="py-3 pr-4 text-gray-600">
+                                @if ((float) $shipment->amount > 0)
+                                    &#8358;{{ number_format($shipment->amount, 2) }}
+                                @else
+                                    Not set
+                                @endif
+                            </td>
                             <td class="py-3 pr-4"><span class="badge {{ $shipment->payment_status === 'paid' ? 'badge-green' : 'badge-gray' }}">{{ ucfirst($shipment->payment_status) }}</span></td>
                             <td class="py-3 pr-4"><span class="badge {{ $shipment->statusBadgeClass() }}">{{ $shipment->statusLabel() }}</span></td>
                             <td class="py-3 pr-4 text-gray-500">{{ $shipment->created_at->format('d M Y') }}</td>

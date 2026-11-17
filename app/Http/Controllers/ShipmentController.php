@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\PricingZone;
 use App\Models\Shipment;
-use App\Services\PricingService;
 use App\Services\SmsService;
 use Endroid\QrCode\Builder\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +20,7 @@ class ShipmentController extends Controller
         return view('pages.request-pickup', compact('zones'));
     }
 
-    public function store(Request $request, PricingService $pricingService, SmsService $smsService): RedirectResponse
+    public function store(Request $request, SmsService $smsService): RedirectResponse
     {
         $data = $request->validate([
             'sender_name' => ['required', 'string', 'max:255'],
@@ -31,18 +30,15 @@ class ShipmentController extends Controller
             'receiver_phone' => ['required', 'string', 'max:20'],
             'delivery_address' => ['required', 'string', 'max:500'],
             'package_type' => ['required', 'string', 'max:100'],
-            'weight_kg' => ['required', 'numeric', 'min:0.1', 'max:1000'],
             'description' => ['nullable', 'string', 'max:1000'],
             'destination_zone' => ['required', 'string', 'exists:pricing_zones,code'],
             'payment_method' => ['required', 'in:pay_on_delivery,online'],
         ]);
 
-        $amount = $pricingService->calculate($data['destination_zone'], (float) $data['weight_kg']);
-
         $shipment = Shipment::create([
             ...$data,
             'user_id' => auth()->id(),
-            'amount' => $amount,
+            'amount' => 0,
         ]);
 
         $shipment->trackingUpdates()->create([

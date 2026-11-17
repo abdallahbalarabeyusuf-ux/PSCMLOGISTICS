@@ -64,7 +64,6 @@
             <tr>
                 <th>Description</th>
                 <th>Package Type</th>
-                <th>Weight</th>
                 <th style="text-align:right">Amount</th>
             </tr>
         </thead>
@@ -72,12 +71,23 @@
             <tr>
                 <td>{{ $shipment->description ?: 'Shipment / Dispatch Delivery' }}</td>
                 <td>{{ $shipment->package_type }}</td>
-                <td>{{ $shipment->weight_kg }} kg</td>
-                <td style="text-align:right">&#8358;{{ number_format($shipment->amount, 2) }}</td>
+                <td style="text-align:right">
+                    @if ((float) $shipment->amount > 0)
+                        &#8358;{{ number_format($shipment->amount, 2) }}
+                    @else
+                        Pending admin estimate
+                    @endif
+                </td>
             </tr>
             <tr class="total-row">
-                <td colspan="3" style="text-align:right">Total</td>
-                <td style="text-align:right">&#8358;{{ number_format($shipment->amount, 2) }}</td>
+                <td colspan="2" style="text-align:right">Total</td>
+                <td style="text-align:right">
+                    @if ((float) $shipment->amount > 0)
+                        &#8358;{{ number_format($shipment->amount, 2) }}
+                    @else
+                        Pending admin estimate
+                    @endif
+                </td>
             </tr>
         </tbody>
     </table>

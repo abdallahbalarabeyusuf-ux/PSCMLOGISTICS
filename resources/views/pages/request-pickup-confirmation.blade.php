@@ -12,13 +12,22 @@
         <p class="mt-4 text-sm text-gray-500">We've sent a confirmation SMS to {{ $shipment->sender_phone }}. Save your waybill number to track this shipment anytime.</p>
 
         <div class="mt-8 card mx-auto max-w-md text-left">
-            <div class="flex justify-between text-sm py-1"><span class="text-gray-500">Package</span><span class="font-semibold">{{ $shipment->package_type }} ({{ $shipment->weight_kg }} kg)</span></div>
-            <div class="flex justify-between text-sm py-1"><span class="text-gray-500">Amount</span><span class="font-semibold">&#8358;{{ number_format($shipment->amount, 2) }}</span></div>
+            <div class="flex justify-between text-sm py-1"><span class="text-gray-500">Package</span><span class="font-semibold">{{ $shipment->package_type }}</span></div>
+            <div class="flex justify-between text-sm py-1">
+                <span class="text-gray-500">Estimated Price</span>
+                <span class="font-semibold">
+                    @if ((float) $shipment->amount > 0)
+                        &#8358;{{ number_format($shipment->amount, 2) }}
+                    @else
+                        Pending admin estimate
+                    @endif
+                </span>
+            </div>
             <div class="flex justify-between text-sm py-1"><span class="text-gray-500">Payment</span><span class="font-semibold">{{ $shipment->payment_method === 'online' ? 'Pay Online' : 'Pay on Delivery' }}</span></div>
         </div>
 
         <div class="mt-8 flex flex-wrap justify-center gap-4">
-            @if ($shipment->payment_method === 'online' && $shipment->payment_status === 'unpaid')
+            @if ($shipment->payment_method === 'online' && $shipment->payment_status === 'unpaid' && (float) $shipment->amount > 0)
                 <a href="{{ route('payments.pay', $shipment) }}" class="btn-secondary">Pay Now</a>
             @endif
             <a href="{{ route('shipments.show', $shipment) }}" class="btn-primary">Track This Shipment</a>

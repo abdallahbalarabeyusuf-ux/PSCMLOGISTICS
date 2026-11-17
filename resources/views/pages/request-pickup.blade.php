@@ -50,14 +50,14 @@
                 </div>
                 <div class="sm:col-span-2">
                     <label class="label">Package Details</label>
-                    <input class="input" x-model="form.package_details" placeholder="e.g. 2kg parcel, documents, etc.">
+                    <input class="input" x-model="form.package_details" placeholder="e.g. parcel, documents, etc.">
                 </div>
             </div>
             <a :href="waLink()" target="_blank" rel="noopener" class="btn-secondary w-full">Send Booking Details on WhatsApp</a>
         </div>
     </section>
 
-    <section class="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" x-data="requestPickupForm()">
+    <section class="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
         <form method="POST" action="{{ route('shipments.store') }}" class="card space-y-8">
             @csrf
 
@@ -112,13 +112,8 @@
                         <x-input-error :messages="$errors->get('package_type')" class="mt-2" />
                     </div>
                     <div>
-                        <label for="weight_kg" class="label">Weight (kg)</label>
-                        <input id="weight_kg" name="weight_kg" type="number" step="0.1" min="0.1" class="input" x-model.number="weight" @input="estimate()" value="{{ old('weight_kg', 1) }}" required>
-                        <x-input-error :messages="$errors->get('weight_kg')" class="mt-2" />
-                    </div>
-                    <div>
                         <label for="destination_zone" class="label">Destination Zone</label>
-                        <select id="destination_zone" name="destination_zone" class="input" x-model="zone" @change="estimate()" required>
+                        <select id="destination_zone" name="destination_zone" class="input" required>
                             @foreach ($zones as $z)
                                 <option value="{{ $z->code }}" @selected(old('destination_zone') === $z->code)>{{ $z->name }}</option>
                             @endforeach
@@ -139,9 +134,9 @@
                     </div>
                 </div>
 
-                <div class="mt-4 rounded-lg bg-secondary-50 p-4 text-center" x-cloak x-show="amount">
-                    <p class="text-sm text-secondary-700">Estimated Price</p>
-                    <p class="text-2xl font-extrabold text-secondary-700">&#8358;<span x-text="amount"></span></p>
+                <div class="mt-4 rounded-lg bg-secondary-50 p-4 text-center">
+                    <p class="text-sm font-semibold text-secondary-700">Estimated Price</p>
+                    <p class="mt-1 text-sm text-secondary-700">Our admin will review your package details and update the estimated price before payment is available.</p>
                 </div>
             </div>
 
@@ -179,30 +174,5 @@
         };
     }
 
-    function requestPickupForm() {
-        return {
-            zone: @json(old('destination_zone', $zones->first()->code ?? '')),
-            weight: @json((float) old('weight_kg', 1)),
-            amount: null,
-            async estimate() {
-                if (!this.zone || !this.weight) return;
-                try {
-                    const response = await fetch(@json(route('pricing.calculate')), {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                        body: JSON.stringify({ destination_zone: this.zone, weight_kg: this.weight }),
-                    });
-                    const data = await response.json();
-                    this.amount = data.amount;
-                } catch (e) {}
-            },
-            init() {
-                this.estimate();
-            },
-        };
-    }
 </script>
 @endpush

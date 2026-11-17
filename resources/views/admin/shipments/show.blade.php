@@ -92,8 +92,9 @@
                         </select>
                     </div>
                     <div>
-                        <label class="label">Amount (&#8358;)</label>
-                        <input type="number" step="0.01" name="amount" value="{{ $shipment->amount }}" class="input">
+                        <label class="label">Estimated Price (&#8358;)</label>
+                        <input type="number" step="0.01" min="0.01" name="amount" value="{{ (float) $shipment->amount > 0 ? $shipment->amount : '' }}" class="input" required>
+                        <p class="text-xs text-gray-500">Set the price customers will see and pay.</p>
                     </div>
                     <button type="submit" class="btn-primary w-full">Save Changes</button>
                 </form>

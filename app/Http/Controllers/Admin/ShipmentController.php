@@ -41,7 +41,7 @@ class ShipmentController extends Controller
         $data = $request->validate([
             'rider_id' => ['nullable', 'exists:riders,id'],
             'payment_status' => ['required', 'in:unpaid,paid'],
-            'amount' => ['required', 'numeric', 'min:0'],
+            'amount' => ['required', 'numeric', 'min:0.01'],
         ]);
 
         $shipment->update($data);

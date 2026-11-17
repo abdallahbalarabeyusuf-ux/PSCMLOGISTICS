@@ -17,6 +17,11 @@ class PaymentController extends Controller
             return redirect()->route('shipments.show', $shipment)->with('status', 'This shipment has already been paid for.');
         }
 
+        if ((float) $shipment->amount <= 0) {
+            return redirect()->route('shipments.show', $shipment)
+                ->withErrors(['payment' => 'The estimated price is waiting for admin confirmation.']);
+        }
+
         if (! $paystack->isConfigured()) {
             return back()->withErrors(['payment' => 'Online payment is not yet configured. Please choose pay on delivery, or contact support.']);
         }

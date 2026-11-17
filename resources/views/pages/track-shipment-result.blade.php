@@ -49,8 +49,16 @@
 
                 <div class="card space-y-2 text-sm">
                     <div class="flex justify-between"><span class="text-gray-500">Package</span><span class="font-semibold">{{ $shipment->package_type }}</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Weight</span><span class="font-semibold">{{ $shipment->weight_kg }} kg</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Amount</span><span class="font-semibold">&#8358;{{ number_format($shipment->amount, 2) }}</span></div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Estimated Price</span>
+                        <span class="font-semibold">
+                            @if ((float) $shipment->amount > 0)
+                                &#8358;{{ number_format($shipment->amount, 2) }}
+                            @else
+                                Pending admin estimate
+                            @endif
+                        </span>
+                    </div>
                     <div class="flex justify-between"><span class="text-gray-500">Payment</span>
                         <span class="badge {{ $shipment->payment_status === 'paid' ? 'badge-green' : 'badge-gray' }}">{{ ucfirst($shipment->payment_status) }}</span>
                     </div>
@@ -60,7 +68,7 @@
                 </div>
 
                 <div class="space-y-3">
-                    @if ($shipment->payment_status === 'unpaid')
+                    @if ($shipment->payment_status === 'unpaid' && (float) $shipment->amount > 0)
                         <a href="{{ route('payments.pay', $shipment) }}" class="btn-secondary w-full">Pay Online</a>
                     @endif
                     <a href="{{ route('shipments.invoice', $shipment) }}" class="btn-outline-dark w-full">Download Invoice</a>
