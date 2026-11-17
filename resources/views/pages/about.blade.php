@@ -40,7 +40,7 @@
                 ['icon' => '⚡', 'title' => 'Speed', 'desc' => 'Same-day pickups and prompt deliveries.'],
                 ['icon' => '🔒', 'title' => 'Security', 'desc' => 'Every package handled with the utmost care.'],
                 ['icon' => '📊', 'title' => 'Transparency', 'desc' => 'Real-time tracking from pickup to delivery.'],
-                ['icon' => '🤝', 'title' => 'Reliability', 'desc' => 'Trusted by 1000+ happy customers.'],
+                ['icon' => '🤝', 'title' => 'Reliability', 'desc' => 'Trusted by 500+ happy customers.'],
             ] as $value)
                 <div class="card text-center">
                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-secondary-50 text-2xl">{{ $value['icon'] }}</div>
@@ -54,9 +54,9 @@
     <section class="bg-primary-900">
         <div class="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
             @foreach ([
-                ['value' => '1000+', 'label' => 'Happy Customers'],
-                ['value' => '5000+', 'label' => 'Successful Deliveries'],
-                ['value' => '20+', 'label' => 'Dedicated Riders'],
+                ['value' => '500+', 'label' => 'Happy Customers'],
+                ['value' => '500+', 'label' => 'Successful Deliveries'],
+                ['value' => '5+', 'label' => 'Dedicated Riders'],
                 ['value' => '98%', 'label' => 'On-time Delivery'],
             ] as $stat)
                 <div class="text-center">
