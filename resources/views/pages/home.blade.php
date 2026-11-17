@@ -58,10 +58,10 @@
         </div>
         <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div class="overflow-hidden rounded-xl">
-                <img src="{{ asset('images/network-map.jpg') }}" alt="PSCM logistics route network" class="h-64 w-full object-cover">
+                <img src="{{ asset('images/container-port.jpg') }}" alt="Aerial view of a container terminal" class="h-64 w-full object-cover">
             </div>
             <div class="overflow-hidden rounded-xl">
-                <img src="{{ asset('images/plane-cargo-ship.jpg') }}" alt="PSCM multi-modal logistics" class="h-64 w-full object-cover">
+                <img src="{{ asset('images/freight-truck.jpg') }}" alt="Freight truck transporting goods on a highway" class="h-64 w-full object-cover">
             </div>
         </div>
     </section>
